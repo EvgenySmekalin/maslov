@@ -36,26 +36,10 @@ AppAsset::register($this);
         ],
     ]);
 
-    $navItems = [
-
-        Yii::$app->user->isGuest ? (
-        ['label' => 'Login', 'url' => ['/site/login']]
-        ) : (
-            '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>'
-        )
-    ];
-
     if (Yii::$app->user->isGuest) {
         $navItems = [
             ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Login', 'url' => ['/site/login']]
+            ['label' => 'Admin login', 'url' => ['/site/login']]
         ];
     } else {
         $navItems = [
