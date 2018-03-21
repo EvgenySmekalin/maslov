@@ -113,3 +113,8 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.ingredient-form .field-ingredients-hidden,
+.ingredient-form button {
+    margin-top: 5px;
+}

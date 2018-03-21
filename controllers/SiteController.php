@@ -4,13 +4,14 @@ namespace app\controllers;
 
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
+use app\models\Ingredients;
 use app\models\LoginForm;
-use app\models\ContactForm;
+use app\models\DishesSearch;
+use app\models\IngredientsSearch;
 
-class SiteController extends Controller
+class SiteController extends MasterController
 {
     /**
      * {@inheritdoc}
@@ -61,7 +62,26 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $searchModel = new IngredientsSearch();
+
+        $ingredientsIds = $this->getIngredientsIds();
+        $dataProvider   = $searchModel->search(Yii::$app->request->queryParams, $ingredientsIds);
+
+        $errors = [];
+
+        $dishesSearchModel = new DishesSearch();
+
+        list($dishesData, $errors) = $dishesSearchModel->searchPublic($ingredientsIds, $errors);
+
+        $ingredients = Ingredients::findAll($ingredientsIds);
+
+        return $this->render('index', [
+            'errors'       => $errors,
+            'dishesData'   => $dishesData,
+            'ingredients'  => $ingredients,
+            'searchModel'  => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
@@ -98,31 +118,4 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
 }
